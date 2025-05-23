@@ -65,28 +65,53 @@ h1 {
 }
 
 .controls-section label {
-    flex-basis: 70%; /* Adjust as needed */
+    /* flex-basis: 70%; Default for other labels */
     color: #555;
     font-size: 0.95em;
+    margin-right: 10px; /* Add some space between label and control */
 }
 
-.controls-section input[type="number"],
+/* Specific styling for the label associated with the length slider */
+label[for="length-slider"] {
+    flex-basis: auto; /* Allow label to size based on content */
+    display: flex; /* To align "密码长度:" and #length-value nicely */
+    align-items: center;
+}
+
+#length-value {
+    font-weight: bold;
+    margin-left: 8px;
+    color: #333;
+    background-color: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+#length-slider {
+    flex-grow: 1; /* Allow slider to take remaining space */
+    width: auto; /* Override any potential fixed width from general input styles */
+    cursor: pointer;
+    /* margin-left: 10px; /* Rely on label's margin-right for spacing */ */
+}
+
+/* Remove margin-left for checkboxes if general label gets margin-right */
 .controls-section input[type="checkbox"] {
-    margin-left: 10px;
+    /* margin-left: 10px; Replaced by label's margin-right */
+    transform: scale(1.2); /* Makes checkbox slightly larger */
+    cursor: pointer;
 }
 
+/* Remove the specific input[type="number"] styles as it's replaced */
+/*
 .controls-section input[type="number"] {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    width: 60px; /* Fixed width for number input */
+    width: 60px; 
     font-size: 0.95em;
 }
-
-.controls-section input[type="checkbox"] {
-    transform: scale(1.2); /* Makes checkbox slightly larger */
-    cursor: pointer;
-}
+*/
 
 #generate-btn {
     background-color: #28a745;
@@ -133,7 +158,15 @@ h1 {
 
     .controls-section label {
         font-size: 0.9em; /* Slightly smaller font for labels on small screens */
-        flex-basis: 60%;
+        /* flex-basis: 60%; Removed to allow natural sizing or specific overrides */
+    }
+
+    label[for="length-slider"] { /* Ensure it behaves well in flex-wrap scenario */
+        flex-basis: auto; /* Keep it auto */
+    }
+
+    #length-slider { /* Ensure slider takes full width if wrapped */
+        min-width: 100px; /* Prevent it from becoming too small before wrapping */
     }
 
     .controls-section div {
@@ -147,15 +180,22 @@ h1 {
 }
 
 @media (max-width: 400px) {
-    .controls-section label {
-        flex-basis: 100%; /* Stack label and control */
+    .controls-section label { /* General labels stack */
+        flex-basis: 100%; 
         margin-bottom: 5px;
     }
-    .controls-section input[type="number"],
+    label[for="length-slider"] { /* Specific label for slider */
+        flex-basis: 100%; /* It should also stack */
+        margin-bottom: 8px; /* A bit more space before the slider below it */
+        justify-content: flex-start; /* Align items to the start */
+    }
+    #length-slider { /* Slider below its label */
+        width: 100%;
+        margin-left: 0; /* Reset margin from desktop view */
+        margin-top: 5px; /* Add some space above the slider if label is stacked */
+    }
     .controls-section input[type="checkbox"] {
-        margin-left: 0; /* Remove margin when stacked */
+        margin-left: 0; /* Remove margin when stacked if not already handled by label margin */
     }
-    .controls-section input[type="number"]{
-        width: 100%; /* Full width for number input */
-    }
+    /* Removed .controls-section input[type="number"] related styles from here */
 }

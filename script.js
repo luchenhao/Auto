@@ -2,12 +2,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // DOM Element References
     const passwordDisplay = document.getElementById('password-display');
     const copyBtn = document.getElementById('copy-btn');
-    const lengthInput = document.getElementById('length');
+    const lengthSliderInput = document.getElementById('length-slider'); // Updated
+    const lengthValueDisplay = document.getElementById('length-value'); // Added
     const lowercaseCheckbox = document.getElementById('lowercase');
     const uppercaseCheckbox = document.getElementById('uppercase');
     const numbersCheckbox = document.getElementById('numbers');
     const symbolsCheckbox = document.getElementById('symbols');
     const generateBtn = document.getElementById('generate-btn');
+
+    // Update initial length display
+    if (lengthSliderInput && lengthValueDisplay) {
+        lengthValueDisplay.textContent = lengthSliderInput.value;
+    }
+
+    // Event listener for slider input to update display
+    if (lengthSliderInput && lengthValueDisplay) {
+        lengthSliderInput.addEventListener('input', () => {
+            lengthValueDisplay.textContent = lengthSliderInput.value;
+        });
+    }
 
     // Character Sets
     const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
@@ -44,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (availableChars === '') {
             // Default to lowercase if no options are selected, or alert the user
-            alert('Please select at least one character type. Defaulting to lowercase.');
+            alert('请至少选择一个字符类型。将默认使用小写字母。'); // Translated
             availableChars = lowercaseChars;
             if (!lowercaseCheckbox.checked) lowercaseCheckbox.checked = true; // Visually check it
         }
@@ -63,19 +76,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Event Listener for "Generate Password" Button
     generateBtn.addEventListener('click', () => {
-        const length = parseInt(lengthInput.value, 10);
+        const length = parseInt(lengthSliderInput.value, 10); // Updated to use slider
         const includeLowercase = lowercaseCheckbox.checked;
         const includeUppercase = uppercaseCheckbox.checked;
         const includeNumbers = numbersCheckbox.checked;
         const includeSymbols = symbolsCheckbox.checked;
 
-        // Validate length
-        const minLength = parseInt(lengthInput.min, 10);
-        const maxLength = parseInt(lengthInput.max, 10);
+        // Validate length (slider inherently handles min/max for user, but good for programmatic changes)
+        const minLength = parseInt(lengthSliderInput.min, 10);
+        const maxLength = parseInt(lengthSliderInput.max, 10);
 
         if (isNaN(length) || length < minLength || length > maxLength) {
-            alert(`Password length must be a number between ${minLength} and ${maxLength}.`);
-            lengthInput.focus();
+            // This validation is less likely to be triggered by user with a slider,
+            // but kept for robustness if value is set programmatically.
+            alert(`密码长度必须在 ${minLength} 和 ${maxLength} 之间。`); // Translated
+            lengthSliderInput.focus();
             return;
         }
 
@@ -87,27 +102,30 @@ document.addEventListener('DOMContentLoaded', () => {
     copyBtn.addEventListener('click', () => {
         const passwordToCopy = passwordDisplay.value;
         if (!passwordToCopy) {
-            alert('Nothing to copy. Generate a password first.');
+            alert('没有内容可复制。请先生成密码。'); // Translated
             return;
         }
 
         navigator.clipboard.writeText(passwordToCopy)
             .then(() => {
-                const originalText = copyBtn.textContent;
-                copyBtn.textContent = 'Copied!';
+                const originalText = copyBtn.textContent; // This will be "复制" from HTML
+                copyBtn.textContent = '已复制!'; // Translated
                 setTimeout(() => {
                     copyBtn.textContent = originalText;
                 }, 1500); // Revert text after 1.5 seconds
             })
             .catch(err => {
                 console.error('Failed to copy password: ', err);
-                alert('Failed to copy password. Please try again or copy manually.');
+                alert('复制密码失败。请重试或手动复制。'); // Translated
             });
     });
 
     // Initial Password Generation on page load
     function generateInitialPassword() {
-        const initialLength = parseInt(lengthInput.value, 10); // Use default length from input
+        if (lengthSliderInput && lengthValueDisplay) { // Ensure elements exist
+            lengthValueDisplay.textContent = lengthSliderInput.value; // Set initial display
+        }
+        const initialLength = parseInt(lengthSliderInput.value, 10); // Use default length from slider
         const password = generatePassword(
             initialLength,
             lowercaseCheckbox.checked,
